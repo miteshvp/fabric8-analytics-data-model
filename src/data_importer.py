@@ -4,7 +4,6 @@ import config
 import traceback
 import json
 import requests
-from datetime import datetime
 from data_source.s3_data_source import S3DataSource
 
 logging.basicConfig()
