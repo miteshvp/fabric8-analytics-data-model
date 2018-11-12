@@ -118,10 +118,12 @@ class CVEDelete(object):
 
     def prepare_payload(self):
         """Prepare payload for Gremlin."""
+        timestamp = get_timestamp()
         payload = {
             'gremlin': cve_node_delete_script_template,
             'bindings': {
-                'cve_id': self._cve_id_dict.get('cve_id')
+                'cve_id': self._cve_id_dict.get('cve_id'),
+                'timestamp': timestamp
             }
         }
 
@@ -279,7 +281,8 @@ g.V().has('pecosystem','{ecosystem}')\
 # delete CVE node
 cve_node_delete_script_template = """\
 g.V().has('cve_id',cve_id)\
-.drop().iterate();\
+.property('modified_date',timestamp)\
+.inE('has_cve').drop().iterate();\
 """
 
 # get CVEs for ecosystem
@@ -311,11 +314,11 @@ g.V().has("pecosystem",ecosystem)\
 
 # Get CVEs by date
 cve_nodes_by_date_script_template = """\
-g.V().has('vertex_label','CVE')\
-.has('modified_date', modified_date).as('cve')\
-.in('has_cve').as('epv')\
-.select('cve','epv').by(valueMap())\
-dedup()\
+g.V().has('modified_date', modified_date)\
+.has('vertex_label','CVE').as('cve')\
+.coalesce(\
+inE('has_cve').outV().as('epv').select('cve','epv').by(valueMap()),\
+select('cve').by(valueMap()))\
 """
 
 # Update CVEDB version

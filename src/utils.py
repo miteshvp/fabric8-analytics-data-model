@@ -94,13 +94,15 @@ def call_gremlin(json_payload):
 
 def prepare_response(gremlin_json):
     """Prepare response to be sent to user based on Gremlin data."""
-    cve_list = []
+    cve_list_add = []
+    cve_list_remove = []
     resp = gremlin_json.get('result', {}).get('data', [])
+
     for cve in resp:
         if 'cve' in cve and 'epv' in cve:
             cve_dict = {
                 "cve_id": cve.get('cve').get('cve_id', [None])[0],
-                "cvss": cve.get('cve').get('cvss_v2', [None])[0],
+                "cvss_v2": cve.get('cve').get('cvss_v2', [None])[0],
                 "description": cve.get('cve').get('description', [None])[0],
                 "ecosystem": cve.get('cve').get('ecosystem', [None])[0],
                 "name": cve.get('epv').get('pname', [None])[0],
@@ -108,6 +110,18 @@ def prepare_response(gremlin_json):
                 "status": cve.get('cve').get('status', [None])[0],
                 "fixed_in": cve.get('cve').get('fixed_in', [None])[0]
             }
-            cve_list.append(cve_dict)
+            cve_list_add.append(cve_dict)
+        else:
+            cve_dict = {
+                "cve_id": cve.get('cve_id', [None])[0],
+                "ecosystem": cve.get('ecosystem', [None])[0]
+            }
+            cve_list_remove.append(cve_dict)
 
-    return {"count": len(cve_list), "cve_list": cve_list}
+    response = {
+        "count": len(cve_list_add + cve_list_remove),
+        "add": cve_list_add,
+        "remove": cve_list_remove
+    }
+
+    return response

@@ -172,11 +172,11 @@ def test_cve_get_by_date_valid(mocker):
     response = cve.get_bydate()
 
     assert response
-    assert 'cve_list' in response
-    assert response['cve_list'][0]['cve_id'] == 'CVE-2018-0001'
-    assert 'ecosystem' in response['cve_list'][0]
-    assert 'name' in response['cve_list'][0]
-    assert 'version' in response['cve_list'][0]
+    assert 'add' in response
+    assert response['add'][0]['cve_id'] == 'CVE-2018-0001'
+    assert 'ecosystem' in response['add'][0]
+    assert 'name' in response['add'][0]
+    assert 'version' in response['add'][0]
 
 
 def test_cve_get_by_date_empty_string():
@@ -186,8 +186,6 @@ def test_cve_get_by_date_empty_string():
     assert response
     assert 'count' in response
     assert response['count'] == 0
-    assert 'cve_list' in response
-    assert len(response['cve_list']) == 0
 
 
 def test_cve_get_by_date_too_early():
@@ -202,8 +200,6 @@ def test_cve_get_by_date_too_early():
     assert response
     assert 'count' in response
     assert response['count'] == 0
-    assert 'cve_list' in response
-    assert len(response['cve_list']) == 0
 
 
 def test_cve_get_by_date_too_late():
@@ -218,8 +214,6 @@ def test_cve_get_by_date_too_late():
     assert response
     assert 'count' in response
     assert response['count'] == 0
-    assert 'cve_list' in response
-    assert len(response['cve_list']) == 0
 
 
 def test_cve_get_by_date_invalid():
@@ -245,5 +239,3 @@ def test_cve_get_by_date_none(mocker):
     assert response
     assert 'count' in response
     assert response['count'] == 0
-    assert 'cve_list' in response
-    assert len(response['cve_list']) == 0
